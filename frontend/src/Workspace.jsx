@@ -250,6 +250,8 @@ export default function Workspace() {
   const [loadError, setLoadError] = useState(null);
   const [language, setLanguage] = useState("python");
   const [code, setCode] = useState("");
+  // Bumped by Reset code, so the editor starts over from the starter code.
+  const [resets, setResets] = useState(0);
   const [cases, setCases] = useState([]);
   const [defaultCases, setDefaultCases] = useState([]);
   const [activeCase, setActiveCase] = useState(0);
@@ -324,6 +326,7 @@ export default function Workspace() {
   const resetCode = () => {
     if (!window.confirm("Replace your code with the starter code?")) return;
     changeCode(problem.starter_code[language] ?? "");
+    setResets((count) => count + 1);
   };
 
   const execute = useCallback(
@@ -470,9 +473,12 @@ export default function Workspace() {
             <button className="link small" onClick={resetCode}><RotateCcw size={13} aria-hidden="true" /> Reset code</button>
           </div>
           <div className="editor">
+            {/* Uncontrolled: the editor owns its text and only reports changes. Feeding `code` back in as `value`
+                could let an older value overwrite a newer keystroke when two land close together. */}
             <Editor
+              key={`${slug}:${language}:${resets}`}
               language={language}
-              value={code}
+              defaultValue={code}
               onChange={changeCode}
               onMount={handleEditorMount}
               theme={editorTheme(prefersDark)}
