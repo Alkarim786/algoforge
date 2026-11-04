@@ -1,28 +1,28 @@
-/* AlgoForge, "Aurora" design: violet with a teal spark, rounded shapes, soft depth.
+/* AlgoForge, "Aurora" design in Electric blue: blue with a teal spark, rounded shapes, soft depth.
    Light is the default; <html data-theme="dark"> switches every token (see theme.js). */
 
 :root {
   --font: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
 
-  --bg: #f7f5ff;
+  --bg: #f6f8fc;
   --surface: #ffffff;
-  --surface-2: #f3f0ff;
-  --code-bg: #fbfaff;
-  --border: #e7e2fb;
-  --border-strong: #d4cbf3;
-  --divider: #efebfd;
-  --text: #1b1533;
-  --muted: #645c88;
-  --accent: #6d28d9;
-  --accent-hover: #5b21b6;
-  --accent-ink: #6d28d9;
+  --surface-2: #f1f5fc;
+  --code-bg: #f8fafe;
+  --border: #e1e7f2;
+  --border-strong: #cdd7ea;
+  --divider: #edf1f8;
+  --text: #111827;
+  --muted: #55607a;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-ink: #1d4ed8;
   --on-accent: #ffffff;
-  --accent-soft: #efe7ff;
-  --panel: #6d28d9;
+  --accent-soft: #e3ecfd;
+  --panel: #1d4ed8;
   --on-panel: #ffffff;
   --panel-mark: #ffffff;
-  --panel-mark-ink: #6d28d9;
+  --panel-mark-ink: #1d4ed8;
   --teal: #0f766e;
   --teal-soft: #d5f5ef;
   --green: #15803d;
@@ -34,13 +34,14 @@
   --red: #b91c1c;
   --red-bg: #fee2e2;
   --red-bar: #dc2626;
-  --gray-bg: #f1eef9;
-  --track: #ebe5ff;
+  --gray-bg: #eef2f8;
+  --track: #e5ebf6;
   --highlight: rgba(250, 204, 21, 0.22);
-  --shadow-sm: 0 1px 2px rgba(76, 29, 149, 0.06);
-  --shadow: 0 12px 32px -20px rgba(76, 29, 149, 0.4);
-  --shadow-lg: 0 32px 70px -32px rgba(76, 29, 149, 0.5);
-  --nav-bg: rgba(247, 245, 255, 0.82);
+  --shadow-sm: 0 1px 2px rgba(30, 58, 138, 0.06);
+  --shadow: 0 12px 32px -20px rgba(30, 58, 138, 0.35);
+  --shadow-lg: 0 32px 70px -32px rgba(30, 58, 138, 0.45);
+  --accent-glow: rgba(37, 99, 235, 0.45);
+  --nav-bg: rgba(246, 248, 252, 0.82);
   --radius: 18px;
   --radius-sm: 12px;
   --radius-xs: 8px;
@@ -48,24 +49,24 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #0e0b1c;
-  --surface: #17132b;
-  --surface-2: #120f22;
-  --code-bg: #120f22;
-  --border: #2c264b;
-  --border-strong: #3d3566;
-  --divider: #221d3b;
-  --text: #f0ecff;
-  --muted: #a8a1cc;
-  --accent: #a78bfa;
-  --accent-hover: #c4b5fd;
-  --accent-ink: #c4b5fd;
-  --on-accent: #150b2e;
-  --accent-soft: #2a1f52;
-  --panel: #231a47;
-  --on-panel: #f0ecff;
-  --panel-mark: #a78bfa;
-  --panel-mark-ink: #150b2e;
+  --bg: #0a0f1c;
+  --surface: #111a2c;
+  --surface-2: #0c1424;
+  --code-bg: #0c1424;
+  --border: #22304d;
+  --border-strong: #314366;
+  --divider: #1a2540;
+  --text: #e6edfb;
+  --muted: #9aa8c7;
+  --accent: #60a5fa;
+  --accent-hover: #93c5fd;
+  --accent-ink: #93c5fd;
+  --on-accent: #06122a;
+  --accent-soft: #132a52;
+  --panel: #0f2350;
+  --on-panel: #e6edfb;
+  --panel-mark: #60a5fa;
+  --panel-mark-ink: #06122a;
   --teal: #5eead4;
   --teal-soft: rgba(45, 212, 191, 0.14);
   --green: #4ade80;
@@ -77,13 +78,14 @@
   --red: #f87171;
   --red-bg: rgba(248, 113, 113, 0.14);
   --red-bar: #ef4444;
-  --gray-bg: #221d3b;
-  --track: #29224a;
+  --gray-bg: #1a2540;
+  --track: #1b2742;
   --highlight: rgba(250, 204, 21, 0.14);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow: 0 12px 32px -20px rgba(0, 0, 0, 0.8);
   --shadow-lg: 0 32px 70px -28px rgba(0, 0, 0, 0.85);
-  --nav-bg: rgba(14, 11, 28, 0.82);
+  --accent-glow: rgba(96, 165, 250, 0.35);
+  --nav-bg: rgba(10, 15, 28, 0.82);
 }
 
 /* ---------- Base ---------- */
@@ -135,7 +137,7 @@ button[type="submit"], button.primary, .button-link {
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
-  box-shadow: 0 8px 20px -10px rgba(109, 40, 217, 0.55);
+  box-shadow: 0 8px 20px -10px var(--accent-glow);
   transition: background-color 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 button[type="submit"]:hover, button.primary:hover, .button-link:hover { background: var(--accent-hover); border-color: var(--accent-hover); transform: translateY(-1px); }
@@ -235,7 +237,7 @@ tbody tr { transition: background-color 0.12s; }
   border-radius: 10px;
   background: var(--accent);
   color: var(--on-accent);
-  box-shadow: 0 6px 16px -8px rgba(109, 40, 217, 0.7);
+  box-shadow: 0 6px 16px -8px var(--accent-glow);
 }
 .brand.large { font-size: 22px; }
 .brand.large .brand-mark { width: 38px; height: 38px; border-radius: 12px; }
@@ -262,7 +264,7 @@ tbody tr { transition: background-color 0.12s; }
   font-weight: 800;
 }
 .avatar.small { width: 32px; height: 32px; font-size: 13px; }
-.avatar.large { width: 60px; height: 60px; font-size: 25px; box-shadow: 0 10px 24px -12px rgba(109, 40, 217, 0.8); }
+.avatar.large { width: 60px; height: 60px; font-size: 25px; box-shadow: 0 10px 24px -12px var(--accent-glow); }
 
 /* ---------- Tags and marks ---------- */
 .tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0; }
@@ -332,10 +334,10 @@ tbody tr { transition: background-color 0.12s; }
 .code-line { display: block; padding: 0 20px 0 0; white-space: pre; }
 .code-line .ln { display: inline-block; width: 46px; padding-right: 18px; text-align: right; color: var(--muted); opacity: 0.6; user-select: none; }
 .tk-kw { color: var(--accent-ink); font-weight: 700; }
-.tk-fn { color: #1d4ed8; }
+.tk-fn { color: #0e7490; }
 .tk-ty { color: var(--teal); }
 .tk-cm { color: var(--muted); font-style: italic; }
-:root[data-theme="dark"] .tk-fn { color: #93c5fd; }
+:root[data-theme="dark"] .tk-fn { color: #67e8f9; }
 .code-card-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding: 14px 18px; border-top: 1px solid var(--divider); font-size: 14px; }
 .code-card-foot .verdict { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font-weight: 800; font-size: 16px; }
 .section { max-width: 1160px; margin: 0 auto; padding: 88px 24px 0; }
@@ -617,7 +619,7 @@ pre.bad { color: var(--red); background: var(--red-bg); }
 .pager-card.next { text-align: right; align-items: flex-end; }
 
 /* Problem list panel */
-.drawer-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(15, 10, 35, 0.45); animation: fade-in 0.2s ease; }
+.drawer-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(8, 14, 32, 0.45); animation: fade-in 0.2s ease; }
 .drawer {
   position: fixed; top: 0; bottom: 0; left: 0; z-index: 41;
   width: min(430px, 92vw);
