@@ -53,6 +53,6 @@ def update_topic(slug: str, payload: TopicUpdate, db: DbSession) -> Topic:
 def delete_topic(slug: str, db: DbSession) -> None:
     topic = get_topic_or_404(db, slug)
     if topic.problems:
-        raise HTTPException(status.HTTP_409_CONFLICT, "Topic still has problems; move or delete them first")
+        raise HTTPException(status.HTTP_409_CONFLICT, "This topic still has problems. Move or delete them first.")
     db.delete(topic)
     db.commit()

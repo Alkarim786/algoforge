@@ -42,7 +42,7 @@ def create_access_token(user_id: int) -> str:
 
 def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[Session, Depends(get_db)]) -> User:
     unauthorized = HTTPException(
-        status.HTTP_401_UNAUTHORIZED, "Invalid or expired token", headers={"WWW-Authenticate": "Bearer"}
+        status.HTTP_401_UNAUTHORIZED, "Your session has expired. Please sign in again.", headers={"WWW-Authenticate": "Bearer"}
     )
     try:
         payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])

@@ -18,7 +18,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 def signup(payload: UserCreate, db: Annotated[Session, Depends(get_db)]) -> User:
     email = payload.email.lower()
     if db.scalar(select(User).where(or_(User.username == payload.username, User.email == email))):
-        raise HTTPException(status.HTTP_409_CONFLICT, "Username or email already registered")
+        raise HTTPException(status.HTTP_409_CONFLICT, "That username or email is already taken. Try another one, or sign in.")
     user = User(username=payload.username, email=email, password_hash=hash_password(payload.password))
     db.add(user)
     db.commit()

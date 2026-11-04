@@ -4,6 +4,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { api, getToken, signOut } from "./api.js";
 import { Avatar, NavBar } from "./App.jsx";
 import { setThemeChoice, useTheme } from "./theme.js";
+import { FieldError, useFieldErrors } from "./validation.jsx";
 
 const formatDate = (value) => new Date(value).toLocaleDateString(undefined, { dateStyle: "long" });
 
@@ -34,12 +35,19 @@ function PasswordForm() {
   const [fields, setFields] = useState({ current_password: "", new_password: "", confirm: "" });
   const [message, setMessage] = useState(null);
   const [busy, setBusy] = useState(false);
-  const update = (name) => (event) => setFields({ ...fields, [name]: event.target.value });
+  const { errors, validate, clear, fieldProps } = useFieldErrors();
+  const ids = { current_password: "current-password", new_password: "new-password", confirm: "confirm-password" };
+  const update = (name) => (event) => {
+    setFields({ ...fields, [name]: event.target.value });
+    clear(ids[name]);
+  };
 
   const submit = async (event) => {
     event.preventDefault();
+    setMessage(null);
+    if (!validate(event.currentTarget)) return;
     if (fields.new_password !== fields.confirm) {
-      setMessage({ ok: false, text: "The new passwords don't match." });
+      setMessage({ ok: false, text: "The two new passwords don't match. Type the same password in both boxes." });
       return;
     }
     setBusy(true);
@@ -59,14 +67,17 @@ function PasswordForm() {
   };
 
   return (
-    <form className="card stack-form" onSubmit={submit}>
+    <form className="card stack-form" onSubmit={submit} noValidate>
       <h2>Change password</h2>
       <label htmlFor="current-password">Current password</label>
-      <input id="current-password" type="password" required autoComplete="current-password" value={fields.current_password} onChange={update("current_password")} />
+      <input id="current-password" type="password" required autoComplete="current-password" data-required-message="Enter your current password." value={fields.current_password} onChange={update("current_password")} {...fieldProps("current-password")} />
+      <FieldError id="current-password" message={errors["current-password"]} />
       <label htmlFor="new-password">New password</label>
-      <input id="new-password" type="password" required minLength={8} autoComplete="new-password" value={fields.new_password} onChange={update("new_password")} />
+      <input id="new-password" type="password" required minLength={8} autoComplete="new-password" data-required-message="Choose a new password." value={fields.new_password} onChange={update("new_password")} {...fieldProps("new-password")} />
+      <FieldError id="new-password" message={errors["new-password"]} />
       <label htmlFor="confirm-password">Confirm new password</label>
-      <input id="confirm-password" type="password" required minLength={8} autoComplete="new-password" value={fields.confirm} onChange={update("confirm")} />
+      <input id="confirm-password" type="password" required autoComplete="new-password" data-required-message="Type the new password again." value={fields.confirm} onChange={update("confirm")} {...fieldProps("confirm-password")} />
+      <FieldError id="confirm-password" message={errors["confirm-password"]} />
       {message && (
         <p className={message.ok ? "ok" : "error"} role={message.ok ? "status" : "alert"}>{message.text}</p>
       )}

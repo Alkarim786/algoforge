@@ -8,6 +8,7 @@ import { DifficultyTag } from "./App.jsx";
 import MermaidDiagram from "./Mermaid.jsx";
 import { Approach, Markdown } from "./SolutionPanel.jsx";
 import { usePrefersDark } from "./theme.js";
+import { checkForm } from "./validation.jsx";
 
 const APPROACHES = [
   ["brute_force", "Brute force"],
@@ -292,6 +293,12 @@ function DetailsForm({ problem, topics, onSaved }) {
 
   const save = async (event) => {
     event.preventDefault();
+    const problem_ = checkForm(event.currentTarget);
+    if (problem_) {
+      problem_.element.focus();
+      setStatus({ busy: false, error: problem_.message, saved: false });
+      return;
+    }
     const parsed = parseEntry(form.entryText);
     if (parsed.error) {
       setStatus({ busy: false, error: `"How the code is called" isn't valid JSON: ${parsed.error}`, saved: false });
@@ -332,7 +339,7 @@ function DetailsForm({ problem, topics, onSaved }) {
   };
 
   return (
-    <form className="admin-form" onSubmit={save}>
+    <form className="admin-form" onSubmit={save} noValidate>
       <section className="card form-grid">
         <label>
           Title
@@ -351,6 +358,7 @@ function DetailsForm({ problem, topics, onSaved }) {
           <input
             required
             pattern="[a-z0-9]+(-[a-z0-9]+)*"
+            data-pattern-message="The slug can use lowercase letters, numbers and single hyphens, like two-sum."
             title="Lowercase letters, digits and single hyphens"
             value={form.slug}
             onChange={(event) => {
@@ -422,6 +430,12 @@ function CaseForm({ problem, initial, onDone, onCancel }) {
 
   const submit = async (event) => {
     event.preventDefault();
+    const invalid = checkForm(event.currentTarget);
+    if (invalid) {
+      invalid.element.focus();
+      setStatus({ busy: false, error: invalid.message });
+      return;
+    }
     setStatus({ busy: true, error: null });
     try {
       if (initial?.id) await api(`/admin/test-cases/${initial.id}`, { method: "PATCH", json: fields });
@@ -435,7 +449,7 @@ function CaseForm({ problem, initial, onDone, onCancel }) {
   };
 
   return (
-    <form className="card case-form" onSubmit={submit}>
+    <form className="card case-form" onSubmit={submit} noValidate>
       <h2>{initial?.id ? "Edit test case" : "Add a test case"}</h2>
       <p className="hint">{inputHint(problem.entry)}</p>
       <div className="two-up">
@@ -629,6 +643,16 @@ function ApproachEditor({ problem, type, label, existing, onChanged }) {
 
   const save = async (event) => {
     event.preventDefault();
+    const invalid = checkForm(event.currentTarget);
+    if (invalid) {
+      invalid.element.focus();
+      setStatus({ busy: false, error: invalid.message, saved: false });
+      return;
+    }
+    if (!form.code.trim()) {
+      setStatus({ busy: false, error: "Add the solution's code before saving.", saved: false });
+      return;
+    }
     if (notes.error) {
       setStatus({ busy: false, error: notes.error, saved: false });
       return;
@@ -665,7 +689,7 @@ function ApproachEditor({ problem, type, label, existing, onChanged }) {
   const lineCount = Math.max(form.code.split("\n").length, 8);
 
   return (
-    <form className="card approach-editor" onSubmit={save}>
+    <form className="card approach-editor" onSubmit={save} noValidate>
       <div className="field-head">
         <h2>{label}</h2>
         <span className={`tag ${existing ? "strength" : "not_attempted"}`}>{existing ? "Published" : "Not written yet"}</span>

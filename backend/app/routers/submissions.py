@@ -32,7 +32,7 @@ def create_submission(payload: SubmissionCreate, user: CurrentUser, db: DbSessio
     if payload.mode == "run":
         case_filter &= TestCase.is_hidden.is_(False)
     if payload.custom_inputs is None and not db.scalar(select(exists().where(case_filter))):
-        raise HTTPException(status.HTTP_409_CONFLICT, "This problem has no test cases yet")
+        raise HTTPException(status.HTTP_409_CONFLICT, "This problem has no test cases yet, so it can't be judged.")
 
     in_flight = db.scalar(
         select(func.count())
@@ -44,7 +44,7 @@ def create_submission(payload: SubmissionCreate, user: CurrentUser, db: DbSessio
         )
     )
     if in_flight >= MAX_IN_FLIGHT:
-        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Wait for your running submissions to finish")
+        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "You already have 3 submissions running. Wait for one to finish, then try again.")
 
     submission = Submission(
         user_id=user.id,
@@ -61,7 +61,7 @@ def create_submission(payload: SubmissionCreate, user: CurrentUser, db: DbSessio
     except RedisError:
         submission.status = SYSTEM_ERROR
         db.commit()
-        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "Judge queue is unavailable") from None
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "The judge is unavailable right now. Please try again in a moment.") from None
     return summarize(submission, problem.slug)
 
 
