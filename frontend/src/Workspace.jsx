@@ -1,13 +1,15 @@
 import Editor from "@monaco-editor/react";
-import { BookOpen, CloudUpload, FileText, FlaskConical, Lightbulb, Play, RotateCcw, Terminal } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, BookOpen, ChevronLeft, ChevronRight, CloudUpload, FileText, FlaskConical, Lightbulb, ListTree, Play, RotateCcw, Terminal } from "lucide-react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ApiError, api, getToken, signOut } from "./api.js";
-import { DifficultyTag, NavBar } from "./App.jsx";
+import { DifficultyTag, NavBar, useProgress, useStudyPath } from "./App.jsx";
 import { EDITOR_FONT, defineEditorThemes, editorTheme } from "./monaco.js";
 import SolutionPanel from "./SolutionPanel.jsx";
 import { usePrefersDark } from "./theme.js";
+
+const ProblemDrawer = lazy(() => import("./ProblemDrawer.jsx"));
 
 const LANGUAGES = [
   { id: "python", label: "Python 3", available: true },
@@ -70,13 +72,14 @@ function Divider({ orientation, containerRef, value, onResize }) {
   );
 }
 
-function Description({ problem }) {
+function Description({ problem, place, previous, next }) {
   return (
     <div className="description">
       <h1>{problem.title}</h1>
       <div className="problem-meta">
         <DifficultyTag difficulty={problem.difficulty} />
         <Link className="chip" to={`/topics/${problem.topic_slug}`}><BookOpen size={14} aria-hidden="true" />Topic notes</Link>
+        {place && <span className="muted small">{place.topic.name} · problem {place.index + 1} of {place.topic.problems.length}</span>}
       </div>
       <div className="markdown">
         <ReactMarkdown>{problem.description}</ReactMarkdown>
@@ -104,6 +107,22 @@ function Description({ problem }) {
             <ReactMarkdown>{problem.constraints}</ReactMarkdown>
           </div>
         </>
+      )}
+      {(previous || next) && (
+        <nav className="problem-pager" aria-label="Other problems">
+          {previous ? (
+            <Link to={`/problems/${previous.slug}`} className="pager-card">
+              <span className="muted small"><ArrowLeft size={14} aria-hidden="true" /> Previous</span>
+              <strong>{previous.title}</strong>
+            </Link>
+          ) : <span />}
+          {next && (
+            <Link to={`/problems/${next.slug}`} className="pager-card next">
+              <span className="muted small">Next <ArrowRight size={14} aria-hidden="true" /></span>
+              <strong>{next.title}</strong>
+            </Link>
+          )}
+        </nav>
       )}
     </div>
   );
@@ -240,9 +259,21 @@ export default function Workspace() {
   const [submission, setSubmission] = useState(null);
   const [runError, setRunError] = useState(null);
   const [leftWidth, setLeftWidth] = useState(42);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [solvedCount, setSolvedCount] = useState(0);
+  const topics = useStudyPath();
+  const progress = useProgress(solvedCount);
+  // Previous / next follow the study path, so the last problem of a topic leads into the next topic.
+  const { place, previous, next } = useMemo(() => {
+    if (!topics) return {};
+    const order = topics.flatMap((topic) => topic.problems.map((item, index) => ({ ...item, topic, index })));
+    const at = order.findIndex((item) => item.slug === slug);
+    return at === -1 ? {} : { place: order[at], previous: order[at - 1], next: order[at + 1] };
+  }, [topics, slug]);
   const [bottomHeight, setBottomHeight] = useState(38);
 
   const splitRef = useRef(null);
+  const leftRef = useRef(null);
   const rightRef = useRef(null);
   const mounted = useRef(true);
   const runRef = useRef(null);
@@ -259,6 +290,7 @@ export default function Workspace() {
     setProblem(null);
     setSubmission(null);
     setLeftTab("description");
+    leftRef.current?.scrollTo(0, 0);
     api(`/problems/${slug}`)
       .then((data) => {
         if (!current) return;
@@ -320,7 +352,11 @@ export default function Workspace() {
           latest = await api(`/submissions/${id}`);
         } while (["pending", "running"].includes(latest.status) && Date.now() - started < POLL_TIMEOUT_MS);
         if (["pending", "running"].includes(latest.status)) throw new Error("The judge is taking too long. Try again in a moment.");
-        if (mounted.current) setSubmission(latest);
+        if (mounted.current) {
+          setSubmission(latest);
+          // An accepted submit changes the solved marks in the problem list.
+          if (mode === "submit" && latest.status === "Accepted") setSolvedCount((count) => count + 1);
+        }
       } catch (failure) {
         if (!mounted.current) return;
         if (failure instanceof ApiError && failure.status === 401) {
@@ -365,6 +401,32 @@ export default function Workspace() {
   return (
     <div className="workspace-page">
       <NavBar>
+        <div className="problem-nav">
+          <button type="button" className="secondary nav-pill" onClick={() => setDrawerOpen(true)} aria-haspopup="dialog" title="All topics and problems">
+            <ListTree size={16} aria-hidden="true" />
+            <span className="nav-pill-label">Problem list</span>
+          </button>
+          <button
+            type="button"
+            className="icon-button"
+            disabled={!previous}
+            onClick={() => navigate(`/problems/${previous.slug}`)}
+            aria-label={previous ? `Previous problem: ${previous.title}` : "No previous problem"}
+            title={previous ? `Previous: ${previous.title}` : "This is the first problem"}
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            type="button"
+            className="icon-button"
+            disabled={!next}
+            onClick={() => navigate(`/problems/${next.slug}`)}
+            aria-label={next ? `Next problem: ${next.title}` : "No next problem"}
+            title={next ? `Next: ${next.title}` : "This is the last problem"}
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
         <div className="actions">
           <button className="secondary" onClick={() => execute("run")} disabled={Boolean(running)} title="Run (Ctrl+Enter)">
             <Play size={15} aria-hidden="true" />
@@ -382,7 +444,7 @@ export default function Workspace() {
         </div>
       </NavBar>
       <div className="workspace" ref={splitRef} style={{ "--left": `${leftWidth}%` }}>
-        <section className="pane left-pane" aria-label="Problem">
+        <section className="pane left-pane" aria-label="Problem" ref={leftRef}>
           <div className="panel-tabs left-tabs" role="tablist">
             {[["description", "Description", FileText], ["solution", "Solution guide", Lightbulb]].map(([id, label, Icon]) => (
               <button key={id} role="tab" aria-selected={leftTab === id} className={leftTab === id ? "active" : ""} onClick={() => setLeftTab(id)}>
@@ -391,7 +453,11 @@ export default function Workspace() {
               </button>
             ))}
           </div>
-          {leftTab === "description" ? <Description problem={problem} /> : <SolutionPanel slug={slug} />}
+          {leftTab === "description" ? (
+            <Description problem={problem} place={place} previous={previous} next={next} />
+          ) : (
+            <SolutionPanel slug={slug} />
+          )}
         </section>
         <Divider orientation="vertical" containerRef={splitRef} value={leftWidth} onResize={(v) => setLeftWidth(clamp(v))} />
         <section className="pane right-pane" ref={rightRef} style={{ "--bottom": `${bottomHeight}%` }}>
@@ -483,6 +549,11 @@ export default function Workspace() {
           </div>
         </section>
       </div>
+      {drawerOpen && topics && (
+        <Suspense fallback={null}>
+          <ProblemDrawer topics={topics} currentSlug={slug} progress={progress} onClose={() => setDrawerOpen(false)} />
+        </Suspense>
+      )}
     </div>
   );
 }

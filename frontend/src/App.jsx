@@ -29,7 +29,7 @@ export function useMe() {
 }
 
 /** Solved and attempted slugs for the signed-in user; empty when signed out. */
-export function useProgress() {
+export function useProgress(refreshKey = 0) {
   const [progress, setProgress] = useState({ solved: [], attempted: [] });
   useEffect(() => {
     if (!getToken()) return undefined;
@@ -40,8 +40,30 @@ export function useProgress() {
     return () => {
       current = false;
     };
-  }, []);
+  }, [refreshKey]);
   return useMemo(() => ({ solved: new Set(progress.solved), attempted: new Set(progress.attempted) }), [progress]);
+}
+
+let studyPathRequest = null;
+
+/** Every topic with its problems, in study-path order. Fetched once per page load and shared. */
+export function useStudyPath() {
+  const [topics, setTopics] = useState(null);
+  useEffect(() => {
+    let current = true;
+    studyPathRequest ??= (async () => {
+      const summaries = await api("/topics");
+      return Promise.all(summaries.map((topic) => api(`/topics/${topic.slug}`)));
+    })().catch((failure) => {
+      studyPathRequest = null;
+      throw failure;
+    });
+    studyPathRequest.then((data) => current && setTopics(data)).catch(() => current && setTopics([]));
+    return () => {
+      current = false;
+    };
+  }, []);
+  return topics;
 }
 
 export function StatusMark({ slug, progress }) {
