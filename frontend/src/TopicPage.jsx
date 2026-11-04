@@ -1,8 +1,9 @@
+import { ArrowLeft, ArrowRight, ChevronRight } from "lucide-react";
 import { Children, isValidElement, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Link, useParams } from "react-router-dom";
 import remarkGfm from "remark-gfm";
-import { api } from "./api.js";
+import { api, getToken } from "./api.js";
 import { DifficultyTag, NavBar, StatusMark, useProgress } from "./App.jsx";
 import MermaidDiagram from "./Mermaid.jsx";
 
@@ -82,6 +83,7 @@ export default function TopicPage() {
   const previous = topics[position - 1];
   const next = topics[position + 1];
   const headings = topic.notes_content ? [...headingsOf(topic.notes_content), { title: "Practice problems", id: "practice-problems" }] : [];
+  const solvedHere = getToken() ? topic.problems.filter((problem) => progress.solved.has(problem.slug)).length : null;
 
   return (
     <>
@@ -89,10 +91,30 @@ export default function TopicPage() {
       <main className="page topic-page">
         <div className="topic-layout">
           <article className="notes">
-            <p className="muted small">
-              <Link to="/">Topics</Link> / Topic {position + 1} of {topics.length}
-            </p>
-            <h1>{topic.name}</h1>
+            <nav className="breadcrumb" aria-label="Breadcrumb">
+              <Link to="/problems">Topics</Link>
+              <ChevronRight size={14} aria-hidden="true" />
+              <span>Topic {position + 1} of {topics.length}</span>
+            </nav>
+            <header className="topic-hero">
+              <h1>{topic.name}</h1>
+              <div className="topic-meta">
+                <span>{topic.problems.length} problems{solvedHere !== null && ` · ${solvedHere} solved`}</span>
+                {solvedHere !== null && (
+                  <div
+                    className="progress"
+                    role="progressbar"
+                    aria-label={`${solvedHere} of ${topic.problems.length} solved`}
+                    aria-valuemin={0}
+                    aria-valuemax={topic.problems.length}
+                    aria-valuenow={solvedHere}
+                  >
+                    <div className="progress-fill" style={{ width: `${(100 * solvedHere) / Math.max(1, topic.problems.length)}%` }} />
+                  </div>
+                )}
+                <a className="button-link secondary" href="#practice-problems">Practice problems</a>
+              </div>
+            </header>
             {topic.notes_content ? (
               <div className="markdown notes-body">
                 <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
@@ -117,13 +139,13 @@ export default function TopicPage() {
             </section>
 
             <nav className="topic-nav" aria-label="Other topics">
-              {previous ? <Link to={`/topics/${previous.slug}`}>← {previous.name}</Link> : <span />}
-              {next && <Link to={`/topics/${next.slug}`}>{next.name} →</Link>}
+              {previous ? <Link to={`/topics/${previous.slug}`}><ArrowLeft size={16} aria-hidden="true" />{previous.name}</Link> : <span />}
+              {next && <Link to={`/topics/${next.slug}`}>{next.name}<ArrowRight size={16} aria-hidden="true" /></Link>}
             </nav>
           </article>
 
           {headings.length > 0 && (
-            <aside className="toc" aria-label="On this page">
+            <aside className="card toc" aria-label="On this page">
               <div className="toc-title">On this page</div>
               <ul>
                 {headings.map((heading) => (

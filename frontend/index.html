@@ -3,7 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AlgoForge: learn data structures and algorithms one topic at a time, with guided solutions and a real judge." />
     <title>AlgoForge</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      // Set the theme before the first paint (see src/theme.js), so the page never flashes the wrong one.
+      (function () {
+        var choice = null;
+        try { choice = localStorage.getItem("algoforge-theme"); } catch (e) {}
+        var dark = choice === "dark" || (choice !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

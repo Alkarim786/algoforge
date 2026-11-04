@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { api } from "./api.js";
+import { EDITOR_FONT, defineEditorThemes, editorTheme } from "./monaco.js";
 import MermaidDiagram from "./Mermaid.jsx";
 import { usePrefersDark } from "./theme.js";
 
@@ -77,7 +78,8 @@ function CodeWithNotes({ code, notes }) {
         <Editor
           language="python"
           value={code.replace(/\n$/, "")}
-          theme={dark ? "vs-dark" : "light"}
+          theme={editorTheme(dark)}
+          beforeMount={defineEditorThemes}
           onMount={handleMount}
           options={{
             readOnly: true,
@@ -86,6 +88,7 @@ function CodeWithNotes({ code, notes }) {
             scrollBeyondLastLine: false,
             lineHeight: LINE_HEIGHT,
             fontSize: 13,
+            fontFamily: EDITOR_FONT,
             renderLineHighlight: "none",
             folding: false,
             contextmenu: false,

@@ -1,9 +1,34 @@
+import { Laptop, LogOut, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { api, getToken, signOut } from "./api.js";
 import { Avatar, NavBar } from "./App.jsx";
+import { setThemeChoice, useTheme } from "./theme.js";
 
 const formatDate = (value) => new Date(value).toLocaleDateString(undefined, { dateStyle: "long" });
+
+function AppearanceCard() {
+  const { choice } = useTheme();
+  const options = [
+    ["light", "Light", Sun],
+    ["dark", "Dark", Moon],
+    ["system", "System", Laptop],
+  ];
+  return (
+    <section className="card stack-form">
+      <h2>Appearance</h2>
+      <p className="muted small">System follows your device's light or dark setting.</p>
+      <div className="theme-options" role="group" aria-label="Theme">
+        {options.map(([value, label, Icon]) => (
+          <button key={value} type="button" className="theme-option" aria-pressed={choice === value} onClick={() => setThemeChoice(value)}>
+            <Icon size={20} aria-hidden="true" />
+            {label}
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 function PasswordForm() {
   const [fields, setFields] = useState({ current_password: "", new_password: "", confirm: "" });
@@ -112,6 +137,7 @@ export default function Profile() {
 
             <div className="profile-grid">
               <PasswordForm />
+              <AppearanceCard />
               <section className="card stack-form">
                 <h2>Account</h2>
                 <p className="muted small">Your progress is saved to your account and shown on your <Link to="/">dashboard</Link>.</p>
@@ -123,6 +149,7 @@ export default function Profile() {
                     navigate("/", { replace: true });
                   }}
                 >
+                  <LogOut size={16} aria-hidden="true" />
                   Sign out
                 </button>
               </section>

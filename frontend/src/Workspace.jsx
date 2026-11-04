@@ -1,10 +1,11 @@
-import "./monaco.js";
 import Editor from "@monaco-editor/react";
+import { BookOpen, CloudUpload, FileText, FlaskConical, Lightbulb, Play, RotateCcw, Terminal } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ApiError, api, getToken, signOut } from "./api.js";
 import { DifficultyTag, NavBar } from "./App.jsx";
+import { EDITOR_FONT, defineEditorThemes, editorTheme } from "./monaco.js";
 import SolutionPanel from "./SolutionPanel.jsx";
 import { usePrefersDark } from "./theme.js";
 
@@ -75,7 +76,7 @@ function Description({ problem }) {
       <h1>{problem.title}</h1>
       <div className="problem-meta">
         <DifficultyTag difficulty={problem.difficulty} />
-        <Link className="small" to={`/topics/${problem.topic_slug}`}>Topic notes</Link>
+        <Link className="chip" to={`/topics/${problem.topic_slug}`}><BookOpen size={14} aria-hidden="true" />Topic notes</Link>
       </div>
       <div className="markdown">
         <ReactMarkdown>{problem.description}</ReactMarkdown>
@@ -366,6 +367,7 @@ export default function Workspace() {
       <NavBar>
         <div className="actions">
           <button className="secondary" onClick={() => execute("run")} disabled={Boolean(running)} title="Run (Ctrl+Enter)">
+            <Play size={15} aria-hidden="true" />
             {running === "run" ? "Running…" : "Run"}
           </button>
           <button
@@ -374,6 +376,7 @@ export default function Workspace() {
             disabled={Boolean(running) || !problem.can_submit}
             title={problem.can_submit ? "Submit (Ctrl+Shift+Enter)" : "Hidden test cases for this problem aren't written yet"}
           >
+            <CloudUpload size={16} aria-hidden="true" />
             {running === "submit" ? "Judging…" : "Submit"}
           </button>
         </div>
@@ -381,8 +384,9 @@ export default function Workspace() {
       <div className="workspace" ref={splitRef} style={{ "--left": `${leftWidth}%` }}>
         <section className="pane left-pane" aria-label="Problem">
           <div className="panel-tabs left-tabs" role="tablist">
-            {[["description", "Description"], ["solution", "Solution"]].map(([id, label]) => (
+            {[["description", "Description", FileText], ["solution", "Solution guide", Lightbulb]].map(([id, label, Icon]) => (
               <button key={id} role="tab" aria-selected={leftTab === id} className={leftTab === id ? "active" : ""} onClick={() => setLeftTab(id)}>
+                <Icon size={15} aria-hidden="true" />
                 {label}
               </button>
             ))}
@@ -397,7 +401,7 @@ export default function Workspace() {
                 <option key={option.id} value={option.id} disabled={!option.available}>{option.label}</option>
               ))}
             </select>
-            <button className="link small" onClick={resetCode}>Reset code</button>
+            <button className="link small" onClick={resetCode}><RotateCcw size={13} aria-hidden="true" /> Reset code</button>
           </div>
           <div className="editor">
             <Editor
@@ -405,8 +409,9 @@ export default function Workspace() {
               value={code}
               onChange={changeCode}
               onMount={handleEditorMount}
-              theme={prefersDark ? "vs-dark" : "light"}
-              options={{ fontSize: 14, minimap: { enabled: false }, scrollBeyondLastLine: false, tabSize: 4, automaticLayout: true }}
+              theme={editorTheme(prefersDark)}
+              beforeMount={defineEditorThemes}
+              options={{ fontSize: 14, fontFamily: EDITOR_FONT, padding: { top: 12 }, minimap: { enabled: false }, scrollBeyondLastLine: false, tabSize: 4, automaticLayout: true }}
             />
           </div>
           <Divider
@@ -418,9 +423,11 @@ export default function Workspace() {
           <div className="bottom-panel">
             <div className="panel-tabs" role="tablist">
               <button role="tab" aria-selected={bottomTab === "testcase"} className={bottomTab === "testcase" ? "active" : ""} onClick={() => setBottomTab("testcase")}>
+                <FlaskConical size={15} aria-hidden="true" />
                 Testcase
               </button>
               <button role="tab" aria-selected={bottomTab === "result"} className={bottomTab === "result" ? "active" : ""} onClick={() => setBottomTab("result")}>
+                <Terminal size={15} aria-hidden="true" />
                 Result
               </button>
             </div>
