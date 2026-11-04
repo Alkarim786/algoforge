@@ -1,0 +1,12 @@
+[
+  {"name": "Array", "slug": "array", "order": 1},
+  {"name": "Binary", "slug": "binary", "order": 2},
+  {"name": "Dynamic Programming", "slug": "dynamic-programming", "order": 3},
+  {"name": "Graph", "slug": "graph", "order": 4},
+  {"name": "Interval", "slug": "interval", "order": 5},
+  {"name": "Linked List", "slug": "linked-list", "order": 6},
+  {"name": "Matrix", "slug": "matrix", "order": 7},
+  {"name": "String", "slug": "string", "order": 8},
+  {"name": "Tree", "slug": "tree", "order": 9},
+  {"name": "Heap", "slug": "heap", "order": 10}
+]

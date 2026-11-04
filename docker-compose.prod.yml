@@ -1,0 +1,127 @@
+# Production stack. Run on the server with:  docker compose -f docker-compose.prod.yml up -d --build
+# (scripts/deploy.sh does this and more). Only Caddy is reachable from outside, on ports 80 and 443.
+name: algoforge
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+x-backend-env: &backend-env
+  DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+  JWT_SECRET: ${JWT_SECRET:?run scripts/init_env.py first}
+  ADMIN_API_KEY: ${ADMIN_API_KEY:?run scripts/init_env.py first}
+  REDIS_URL: redis://redis:6379/0
+  ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-720}
+  SANDBOX_RUNTIME: ${SANDBOX_RUNTIME:-}
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?run scripts/init_env.py first}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?run scripts/init_env.py first}
+      POSTGRES_DB: ${POSTGRES_DB:?run scripts/init_env.py first}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: *logging
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    # Append-only file, so queued submissions survive a restart.
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: *logging
+
+  api:
+    build:
+      context: ./backend
+      args:
+        REQUIREMENTS: requirements.txt
+    image: algoforge-backend:latest
+    restart: unless-stopped
+    user: "10001"
+    # --root-path: Caddy serves the API under /api, so the interactive docs live at /api/docs.
+    # --proxy-headers: client addresses come from Caddy (the only thing that can reach this port), which the
+    # sign-in rate limit needs.
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers ${API_WORKERS:-2}
+             --root-path /api --proxy-headers --forwarded-allow-ips '*' --no-server-header"
+    environment: *backend-env
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    logging: *logging
+
+  # Build-only: exits at once. Makes `up --build` also build the image user code runs in.
+  sandbox-python:
+    build: ./sandbox/python
+    image: algoforge-sandbox-python:latest
+    entrypoint: ["true"]
+    network_mode: none
+    restart: "no"
+
+  worker:
+    image: algoforge-backend:latest
+    pull_policy: never  # built by the api service
+    restart: unless-stopped
+    command: rq worker --url redis://redis:6379/0 submissions
+    environment: *backend-env
+    volumes:
+      # Root-equivalent access to the host's Docker, used only to start sandbox containers. User code never
+      # runs in this container. Set SANDBOX_RUNTIME=runsc (gVisor) for a stronger boundary around user code.
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      api:
+        condition: service_healthy
+      sandbox-python:
+        condition: service_completed_successfully
+    logging: *logging
+
+  web:
+    build: ./frontend
+    image: algoforge-web:latest
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env, for example algoforge.example.com}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+      - "${HTTPS_PORT:-443}:443/udp"
+    volumes:
+      # Certificates. Keep this volume: Let's Encrypt rate-limits re-issuing.
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+    logging: *logging
+
+volumes:
+  pgdata:
+  redisdata:
+  caddy_data:
+  caddy_config:

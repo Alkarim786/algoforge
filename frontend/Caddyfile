@@ -1,0 +1,36 @@
+# Production web server. DOMAIN comes from .env: a real domain gets a free Let's Encrypt certificate and
+# HTTPS automatically; "http://localhost" serves plain HTTP for a local trial run.
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		Content-Security-Policy "frame-ancestors 'none'; object-src 'none'; base-uri 'self'"
+		-Server
+	}
+
+	# The API, under /api like in development. Code submissions can be up to 64 KB; allow some headroom.
+	handle_path /api/* {
+		request_body {
+			max_size 2MB
+		}
+		reverse_proxy api:8000
+	}
+
+	handle {
+		root * /srv
+		# Hashed build assets and the Monaco files never change under the same name.
+		@immutable path /assets/* /monaco/*
+		header @immutable Cache-Control "public, max-age=31536000, immutable"
+		# Everything else is the app shell, which must be re-checked so a deploy shows up at once.
+		@shell not path /assets/* /monaco/*
+		header @shell Cache-Control "no-cache"
+		# Client-side routes (/problems/two-sum, /admin, ...) all load the single-page app.
+		try_files {path} /index.html
+		file_server
+	}
+}
