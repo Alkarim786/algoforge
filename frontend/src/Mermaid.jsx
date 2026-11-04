@@ -4,34 +4,34 @@ import { usePrefersDark } from "./theme.js";
 let mermaidModule;
 const loadMermaid = () => (mermaidModule ??= import("mermaid").then((module) => module.default));
 
-// Node colour shows its role: steps violet, decisions amber, start/end teal (the Aurora palette).
+// Node colour shows its role: steps blue, decisions amber, start/end teal.
 const PALETTE = {
   light: {
-    step: "fill:#f1ebff,stroke:#7c3aed,color:#2e1065",
+    step: "fill:#e8f0fe,stroke:#2563eb,color:#0b2a6b",
     decision: "fill:#fff4dc,stroke:#d97706,color:#4a2c00",
     terminal: "fill:#dcf7f1,stroke:#0d9488,color:#0b3b36",
     theme: {
-      lineColor: "#9a92bd",
-      textColor: "#1b1533",
-      primaryTextColor: "#1b1533",
+      lineColor: "#8e9ab5",
+      textColor: "#111827",
+      primaryTextColor: "#111827",
       edgeLabelBackground: "#ffffff",
-      clusterBkg: "#f7f5ff",
-      clusterBorder: "#e0d9f7",
-      titleColor: "#5b5480",
+      clusterBkg: "#f6f8fc",
+      clusterBorder: "#dbe3f0",
+      titleColor: "#55607a",
     },
   },
   dark: {
-    step: "fill:#251d47,stroke:#a78bfa,color:#ede7ff",
+    step: "fill:#14264a,stroke:#60a5fa,color:#e1ecff",
     decision: "fill:#3a2a10,stroke:#f5b544,color:#ffe9c2",
     terminal: "fill:#0f3330,stroke:#2dd4bf,color:#d2fbf3",
     theme: {
-      lineColor: "#7f77a8",
-      textColor: "#f0ecff",
-      primaryTextColor: "#f0ecff",
-      edgeLabelBackground: "#17132b",
-      clusterBkg: "#120f22",
-      clusterBorder: "#2c264b",
-      titleColor: "#b9b2dc",
+      lineColor: "#7a8aad",
+      textColor: "#e6edfb",
+      primaryTextColor: "#e6edfb",
+      edgeLabelBackground: "#111a2c",
+      clusterBkg: "#0c1424",
+      clusterBorder: "#22304d",
+      titleColor: "#aab8d6",
     },
   },
 };
