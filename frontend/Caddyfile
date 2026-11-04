@@ -1,5 +1,14 @@
 # Production web server. DOMAIN comes from .env: a real domain gets a free Let's Encrypt certificate and
-# HTTPS automatically; "http://localhost" serves plain HTTP for a local trial run.
+# HTTPS automatically; "http://localhost" serves plain HTTP for a local trial run, and ":80" serves any
+# hostname over plain HTTP, for running behind a tunnel that provides HTTPS (see DEPLOY.md).
+
+{
+	servers {
+		# Proxies on private addresses (a Cloudflare tunnel on this machine) pass on the visitor's address,
+		# so the sign-in limit applies per visitor. Requests straight from the internet never match this.
+		trusted_proxies static private_ranges
+	}
+}
 
 {$DOMAIN} {
 	encode zstd gzip

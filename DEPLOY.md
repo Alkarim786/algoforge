@@ -21,7 +21,7 @@ The judge starts a fresh Docker container for every test case. That needs a real
 | Providers | Hetzner, DigitalOcean, Linode, AWS Lightsail or EC2, Google Compute Engine, Oracle Cloud |
 | Domain | Any registrar; you only need to add a DNS record |
 
-Hosting for free? Follow [Free hosting on Oracle Cloud](#free-hosting-on-oracle-cloud) first, then come back for steps 3 to 8.
+Hosting for free? Follow [Free hosting on Oracle Cloud](#free-hosting-on-oracle-cloud) first, then come back for steps 3 to 8. Just want a public link from your own computer for now? See [Host from your own computer](#host-from-your-own-computer).
 
 ## First deployment
 
@@ -85,6 +85,52 @@ crontab -e
 ```
 
 Dumps go to `backups/` and are kept for 14 days. They're on the same disk as the database, so also copy them off the server regularly, for example with `rclone` to cloud storage, or by turning on your provider's volume snapshots. `scripts/backup.sh` explains how to restore one.
+
+## Host from your own computer
+
+No server needed: your computer runs the production stack, and a free Cloudflare quick tunnel gives it a public HTTPS address. You don't need a domain, an account, or router port-forwarding, and your home IP stays hidden. The site is online only while the computer is on, awake and running Docker, and the address changes each time the tunnel restarts. That makes it good for demos and sharing, not for permanent hosting.
+
+**1. Create `.env`.** Run this once:
+
+```bash
+python scripts/init_env.py
+```
+
+Then add these lines to `.env`. `DOMAIN=:80` makes Caddy answer for the tunnel's address over plain HTTP; Cloudflare provides the HTTPS. The `127.0.0.1` ports keep the site off your local network.
+
+```
+DOMAIN=:80
+HTTP_PORT=127.0.0.1:8080
+HTTPS_PORT=127.0.0.1:8443
+```
+
+**2. Start the stack and the tunnel** (in the project folder):
+
+```bash
+docker compose -f docker-compose.prod.yml -f docker-compose.tunnel.yml up -d --build --scale worker=2
+docker compose -f docker-compose.prod.yml exec api python -m app.seed
+```
+
+**3. Find your public address.** It's the `https://….trycloudflare.com` line in:
+
+```bash
+docker compose -f docker-compose.prod.yml -f docker-compose.tunnel.yml logs tunnel
+```
+
+**4. Create your admin account:**
+
+```bash
+docker compose -f docker-compose.prod.yml exec api python -m app.create_admin <username> <email>
+```
+
+While it's running, `http://localhost:8080` also opens the site on this computer.
+
+- **Stop:** `docker compose -f docker-compose.prod.yml -f docker-compose.tunnel.yml down` (your data is kept).
+- **Stop only the public link:** `docker compose -f docker-compose.prod.yml -f docker-compose.tunnel.yml stop tunnel`.
+- **Keep it reachable:** set Windows to never sleep while plugged in, and keep Docker Desktop running.
+- **Safety:** user code runs in sandbox containers inside Docker Desktop's Linux VM, not directly on Windows. The judge worker controls Docker, though, so only keep the tunnel up while you need the site public, and keep Windows and Docker Desktop updated.
+
+**A permanent address on this computer:** a free Cloudflare account plus a domain on Cloudflare gives you a *named* tunnel with a fixed address. Or move to a server (below) when you want the site always online.
 
 ## Free hosting on Oracle Cloud
 

@@ -1,0 +1,13 @@
+# Hosting from your own computer: adds a Cloudflare quick tunnel in front of the production stack, so the site
+# gets a public https://<random>.trycloudflare.com address with no domain, account or router setup.
+#   docker compose -f docker-compose.prod.yml -f docker-compose.tunnel.yml up -d
+#   docker compose -f docker-compose.prod.yml -f docker-compose.tunnel.yml logs tunnel   # shows the address
+# Set DOMAIN=:80 in .env so Caddy answers for the tunnel's hostname; Cloudflare provides the HTTPS.
+# The address changes whenever the tunnel restarts. See DEPLOY.md for a permanent one.
+services:
+  tunnel:
+    image: cloudflare/cloudflared:2024.12.2
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://web:80
+    depends_on:
+      - web
