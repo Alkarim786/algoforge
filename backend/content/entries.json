@@ -1,0 +1,914 @@
+{
+  "two-sum": {
+    "method": "twoSum",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      },
+      {
+        "name": "target",
+        "type": "int"
+      }
+    ],
+    "returns": "List[int]"
+  },
+  "maximum-subarray": {
+    "method": "maxSubArray",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "int"
+  },
+  "number-of-1-bits": {
+    "method": "hammingWeight",
+    "params": [
+      {
+        "name": "n",
+        "type": "int"
+      }
+    ],
+    "returns": "int"
+  },
+  "counting-bits": {
+    "method": "countBits",
+    "params": [
+      {
+        "name": "n",
+        "type": "int"
+      }
+    ],
+    "returns": "List[int]"
+  },
+  "climbing-stairs": {
+    "method": "climbStairs",
+    "params": [
+      {
+        "name": "n",
+        "type": "int"
+      }
+    ],
+    "returns": "int"
+  },
+  "coin-change": {
+    "method": "coinChange",
+    "params": [
+      {
+        "name": "coins",
+        "type": "List[int]"
+      },
+      {
+        "name": "amount",
+        "type": "int"
+      }
+    ],
+    "returns": "int"
+  },
+  "course-schedule": {
+    "method": "canFinish",
+    "params": [
+      {
+        "name": "numCourses",
+        "type": "int"
+      },
+      {
+        "name": "prerequisites",
+        "type": "List[List[int]]"
+      }
+    ],
+    "returns": "bool"
+  },
+  "number-of-islands": {
+    "method": "numIslands",
+    "params": [
+      {
+        "name": "grid",
+        "type": "List[str]"
+      }
+    ],
+    "returns": "int"
+  },
+  "insert-interval": {
+    "method": "insert",
+    "params": [
+      {
+        "name": "intervals",
+        "type": "List[List[int]]"
+      },
+      {
+        "name": "newInterval",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "List[List[int]]"
+  },
+  "merge-intervals": {
+    "method": "merge",
+    "params": [
+      {
+        "name": "intervals",
+        "type": "List[List[int]]"
+      }
+    ],
+    "returns": "List[List[int]]"
+  },
+  "reverse-linked-list": {
+    "method": "reverseList",
+    "params": [
+      {
+        "name": "head",
+        "type": "Optional[ListNode]"
+      }
+    ],
+    "returns": "Optional[ListNode]"
+  },
+  "merge-two-sorted-lists": {
+    "method": "mergeTwoLists",
+    "params": [
+      {
+        "name": "list1",
+        "type": "Optional[ListNode]"
+      },
+      {
+        "name": "list2",
+        "type": "Optional[ListNode]"
+      }
+    ],
+    "returns": "Optional[ListNode]"
+  },
+  "set-matrix-zeroes": {
+    "method": "setZeroes",
+    "params": [
+      {
+        "name": "matrix",
+        "type": "List[List[int]]"
+      }
+    ],
+    "returns": "None"
+  },
+  "rotate-image": {
+    "method": "rotate",
+    "params": [
+      {
+        "name": "matrix",
+        "type": "List[List[int]]"
+      }
+    ],
+    "returns": "None"
+  },
+  "longest-substring-without-repeating-characters": {
+    "method": "lengthOfLongestSubstring",
+    "params": [
+      {
+        "name": "s",
+        "type": "str"
+      }
+    ],
+    "returns": "int"
+  },
+  "valid-parentheses": {
+    "method": "isValid",
+    "params": [
+      {
+        "name": "s",
+        "type": "str"
+      }
+    ],
+    "returns": "bool"
+  },
+  "maximum-depth-of-binary-tree": {
+    "method": "maxDepth",
+    "params": [
+      {
+        "name": "root",
+        "type": "Optional[TreeNode]"
+      }
+    ],
+    "returns": "int"
+  },
+  "validate-binary-search-tree": {
+    "method": "isValidBST",
+    "params": [
+      {
+        "name": "root",
+        "type": "Optional[TreeNode]"
+      }
+    ],
+    "returns": "bool"
+  },
+  "top-k-frequent-elements": {
+    "method": "topKFrequent",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      },
+      {
+        "name": "k",
+        "type": "int"
+      }
+    ],
+    "returns": "List[int]"
+  },
+  "find-median-from-data-stream": {
+    "class": "MedianFinder",
+    "operations": {
+      "add": {
+        "method": "addNum",
+        "params": [
+          {
+            "name": "num",
+            "type": "int"
+          }
+        ],
+        "returns": "None"
+      },
+      "median": {
+        "method": "findMedian",
+        "returns": "float"
+      }
+    }
+  },
+  "best-time-to-buy-and-sell-stock": {
+    "method": "maxProfit",
+    "params": [
+      {
+        "name": "prices",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "int"
+  },
+  "contains-duplicate": {
+    "method": "containsDuplicate",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "bool"
+  },
+  "product-of-array-except-self": {
+    "method": "productExceptSelf",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "List[int]"
+  },
+  "maximum-product-subarray": {
+    "method": "maxProduct",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "int"
+  },
+  "find-minimum-in-rotated-sorted-array": {
+    "method": "findMin",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "int"
+  },
+  "search-in-rotated-sorted-array": {
+    "method": "search",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      },
+      {
+        "name": "target",
+        "type": "int"
+      }
+    ],
+    "returns": "int"
+  },
+  "3sum": {
+    "method": "threeSum",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "List[List[int]]",
+    "normalize": "sorted_lists"
+  },
+  "container-with-most-water": {
+    "method": "maxArea",
+    "params": [
+      {
+        "name": "height",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "int"
+  },
+  "sum-of-two-integers": {
+    "method": "getSum",
+    "params": [
+      {
+        "name": "a",
+        "type": "int"
+      },
+      {
+        "name": "b",
+        "type": "int"
+      }
+    ],
+    "returns": "int"
+  },
+  "missing-number": {
+    "method": "missingNumber",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "int"
+  },
+  "reverse-bits": {
+    "method": "reverseBits",
+    "params": [
+      {
+        "name": "n",
+        "type": "int"
+      }
+    ],
+    "returns": "int"
+  },
+  "longest-increasing-subsequence": {
+    "method": "lengthOfLIS",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "int"
+  },
+  "longest-common-subsequence": {
+    "method": "longestCommonSubsequence",
+    "params": [
+      {
+        "name": "text1",
+        "type": "str"
+      },
+      {
+        "name": "text2",
+        "type": "str"
+      }
+    ],
+    "returns": "int"
+  },
+  "word-break": {
+    "method": "wordBreak",
+    "params": [
+      {
+        "name": "s",
+        "type": "str"
+      },
+      {
+        "name": "wordDict",
+        "type": "List[str]"
+      }
+    ],
+    "returns": "bool"
+  },
+  "combination-sum-iv": {
+    "method": "combinationSum4",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      },
+      {
+        "name": "target",
+        "type": "int"
+      }
+    ],
+    "returns": "int"
+  },
+  "house-robber": {
+    "method": "rob",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "int"
+  },
+  "house-robber-ii": {
+    "method": "rob",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "int"
+  },
+  "decode-ways": {
+    "method": "numDecodings",
+    "params": [
+      {
+        "name": "s",
+        "type": "str"
+      }
+    ],
+    "returns": "int"
+  },
+  "unique-paths": {
+    "method": "uniquePaths",
+    "params": [
+      {
+        "name": "m",
+        "type": "int"
+      },
+      {
+        "name": "n",
+        "type": "int"
+      }
+    ],
+    "returns": "int"
+  },
+  "jump-game": {
+    "method": "canJump",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "bool"
+  },
+  "non-overlapping-intervals": {
+    "method": "eraseOverlapIntervals",
+    "params": [
+      {
+        "name": "intervals",
+        "type": "List[List[int]]"
+      }
+    ],
+    "returns": "int"
+  },
+  "meeting-rooms": {
+    "method": "canAttendMeetings",
+    "params": [
+      {
+        "name": "intervals",
+        "type": "List[List[int]]"
+      }
+    ],
+    "returns": "bool"
+  },
+  "meeting-rooms-ii": {
+    "method": "minMeetingRooms",
+    "params": [
+      {
+        "name": "intervals",
+        "type": "List[List[int]]"
+      }
+    ],
+    "returns": "int"
+  },
+  "spiral-matrix": {
+    "method": "spiralOrder",
+    "params": [
+      {
+        "name": "matrix",
+        "type": "List[List[int]]"
+      }
+    ],
+    "returns": "List[int]"
+  },
+  "word-search": {
+    "method": "exist",
+    "params": [
+      {
+        "name": "board",
+        "type": "List[List[str]]"
+      },
+      {
+        "name": "word",
+        "type": "str"
+      }
+    ],
+    "returns": "bool"
+  },
+  "linked-list-cycle": {
+    "method": "hasCycle",
+    "params": [
+      {
+        "name": "head",
+        "type": "Optional[ListNode]"
+      }
+    ],
+    "returns": "bool",
+    "cycle": true
+  },
+  "merge-k-sorted-lists": {
+    "method": "mergeKLists",
+    "params": [
+      {
+        "name": "lists",
+        "type": "List[Optional[ListNode]]"
+      }
+    ],
+    "returns": "Optional[ListNode]"
+  },
+  "remove-nth-node-from-end-of-list": {
+    "method": "removeNthFromEnd",
+    "params": [
+      {
+        "name": "head",
+        "type": "Optional[ListNode]"
+      },
+      {
+        "name": "n",
+        "type": "int"
+      }
+    ],
+    "returns": "Optional[ListNode]"
+  },
+  "reorder-list": {
+    "method": "reorderList",
+    "params": [
+      {
+        "name": "head",
+        "type": "Optional[ListNode]"
+      }
+    ],
+    "returns": "None"
+  },
+  "clone-graph": {
+    "method": "cloneGraph",
+    "params": [
+      {
+        "name": "node",
+        "type": "Optional[Node]"
+      }
+    ],
+    "returns": "Optional[Node]"
+  },
+  "pacific-atlantic-water-flow": {
+    "method": "pacificAtlantic",
+    "params": [
+      {
+        "name": "heights",
+        "type": "List[List[int]]"
+      }
+    ],
+    "returns": "List[List[int]]",
+    "normalize": "sorted"
+  },
+  "longest-consecutive-sequence": {
+    "method": "longestConsecutive",
+    "params": [
+      {
+        "name": "nums",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "int"
+  },
+  "alien-dictionary": {
+    "method": "alienOrder",
+    "params": [
+      {
+        "name": "words",
+        "type": "List[str]"
+      }
+    ],
+    "returns": "str"
+  },
+  "graph-valid-tree": {
+    "method": "validTree",
+    "params": [
+      {
+        "name": "n",
+        "type": "int"
+      },
+      {
+        "name": "edges",
+        "type": "List[List[int]]"
+      }
+    ],
+    "returns": "bool"
+  },
+  "number-of-connected-components-in-an-undirected-graph": {
+    "method": "countComponents",
+    "params": [
+      {
+        "name": "n",
+        "type": "int"
+      },
+      {
+        "name": "edges",
+        "type": "List[List[int]]"
+      }
+    ],
+    "returns": "int"
+  },
+  "longest-repeating-character-replacement": {
+    "method": "characterReplacement",
+    "params": [
+      {
+        "name": "s",
+        "type": "str"
+      },
+      {
+        "name": "k",
+        "type": "int"
+      }
+    ],
+    "returns": "int"
+  },
+  "minimum-window-substring": {
+    "method": "minWindow",
+    "params": [
+      {
+        "name": "s",
+        "type": "str"
+      },
+      {
+        "name": "t",
+        "type": "str"
+      }
+    ],
+    "returns": "str"
+  },
+  "valid-anagram": {
+    "method": "isAnagram",
+    "params": [
+      {
+        "name": "s",
+        "type": "str"
+      },
+      {
+        "name": "t",
+        "type": "str"
+      }
+    ],
+    "returns": "bool"
+  },
+  "group-anagrams": {
+    "method": "groupAnagrams",
+    "params": [
+      {
+        "name": "strs",
+        "type": "List[str]"
+      }
+    ],
+    "returns": "List[List[str]]",
+    "normalize": "sorted_lists"
+  },
+  "valid-palindrome": {
+    "method": "isPalindrome",
+    "params": [
+      {
+        "name": "s",
+        "type": "str"
+      }
+    ],
+    "returns": "bool"
+  },
+  "longest-palindromic-substring": {
+    "method": "longestPalindrome",
+    "params": [
+      {
+        "name": "s",
+        "type": "str"
+      }
+    ],
+    "returns": "str"
+  },
+  "palindromic-substrings": {
+    "method": "countSubstrings",
+    "params": [
+      {
+        "name": "s",
+        "type": "str"
+      }
+    ],
+    "returns": "int"
+  },
+  "encode-and-decode-strings": {
+    "codec": "Codec",
+    "encode": "encode",
+    "decode": "decode",
+    "params": [
+      {
+        "name": "strs",
+        "type": "List[str]"
+      }
+    ],
+    "returns": "List[str]"
+  },
+  "same-tree": {
+    "method": "isSameTree",
+    "params": [
+      {
+        "name": "p",
+        "type": "Optional[TreeNode]"
+      },
+      {
+        "name": "q",
+        "type": "Optional[TreeNode]"
+      }
+    ],
+    "returns": "bool"
+  },
+  "invert-binary-tree": {
+    "method": "invertTree",
+    "params": [
+      {
+        "name": "root",
+        "type": "Optional[TreeNode]"
+      }
+    ],
+    "returns": "Optional[TreeNode]"
+  },
+  "binary-tree-maximum-path-sum": {
+    "method": "maxPathSum",
+    "params": [
+      {
+        "name": "root",
+        "type": "Optional[TreeNode]"
+      }
+    ],
+    "returns": "int"
+  },
+  "binary-tree-level-order-traversal": {
+    "method": "levelOrder",
+    "params": [
+      {
+        "name": "root",
+        "type": "Optional[TreeNode]"
+      }
+    ],
+    "returns": "List[List[int]]"
+  },
+  "serialize-and-deserialize-binary-tree": {
+    "codec": "Codec",
+    "encode": "serialize",
+    "decode": "deserialize",
+    "params": [
+      {
+        "name": "root",
+        "type": "Optional[TreeNode]"
+      }
+    ],
+    "returns": "Optional[TreeNode]"
+  },
+  "subtree-of-another-tree": {
+    "method": "isSubtree",
+    "params": [
+      {
+        "name": "root",
+        "type": "Optional[TreeNode]"
+      },
+      {
+        "name": "subRoot",
+        "type": "Optional[TreeNode]"
+      }
+    ],
+    "returns": "bool"
+  },
+  "construct-binary-tree-from-preorder-and-inorder-traversal": {
+    "method": "buildTree",
+    "params": [
+      {
+        "name": "preorder",
+        "type": "List[int]"
+      },
+      {
+        "name": "inorder",
+        "type": "List[int]"
+      }
+    ],
+    "returns": "Optional[TreeNode]"
+  },
+  "kth-smallest-element-in-a-bst": {
+    "method": "kthSmallest",
+    "params": [
+      {
+        "name": "root",
+        "type": "Optional[TreeNode]"
+      },
+      {
+        "name": "k",
+        "type": "int"
+      }
+    ],
+    "returns": "int"
+  },
+  "lowest-common-ancestor-of-a-binary-search-tree": {
+    "method": "lowestCommonAncestor",
+    "params": [
+      {
+        "name": "root",
+        "type": "TreeNode"
+      },
+      {
+        "name": "p",
+        "type": "TreeNodeRef"
+      },
+      {
+        "name": "q",
+        "type": "TreeNodeRef"
+      }
+    ],
+    "returns": "TreeNodeRef"
+  },
+  "implement-trie-prefix-tree": {
+    "class": "Trie",
+    "operations": {
+      "insert": {
+        "method": "insert",
+        "params": [
+          {
+            "name": "word",
+            "type": "str"
+          }
+        ],
+        "returns": "None"
+      },
+      "search": {
+        "method": "search",
+        "params": [
+          {
+            "name": "word",
+            "type": "str"
+          }
+        ],
+        "returns": "bool"
+      },
+      "startsWith": {
+        "method": "startsWith",
+        "params": [
+          {
+            "name": "prefix",
+            "type": "str"
+          }
+        ],
+        "returns": "bool"
+      }
+    }
+  },
+  "design-add-and-search-words-data-structure": {
+    "class": "WordDictionary",
+    "operations": {
+      "addWord": {
+        "method": "addWord",
+        "params": [
+          {
+            "name": "word",
+            "type": "str"
+          }
+        ],
+        "returns": "None"
+      },
+      "search": {
+        "method": "search",
+        "params": [
+          {
+            "name": "word",
+            "type": "str"
+          }
+        ],
+        "returns": "bool"
+      }
+    }
+  },
+  "word-search-ii": {
+    "method": "findWords",
+    "params": [
+      {
+        "name": "board",
+        "type": "List[List[str]]"
+      },
+      {
+        "name": "words",
+        "type": "List[str]"
+      }
+    ],
+    "returns": "List[str]",
+    "normalize": "sorted"
+  }
+}
