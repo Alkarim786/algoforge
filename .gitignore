@@ -7,3 +7,4 @@ node_modules/
 frontend/public/monaco/
 dist/
 backups/
+tools/demo-video/out/
