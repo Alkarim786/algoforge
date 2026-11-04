@@ -1,4 +1,4 @@
-import "./monaco.js";
+import { EDITOR_FONT, defineEditorThemes, editorTheme } from "./monaco.js";
 import Editor from "@monaco-editor/react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
@@ -697,9 +697,10 @@ function ApproachEditor({ problem, type, label, existing, onChanged }) {
           <Editor
             language="python"
             value={form.code}
-            theme={dark ? "vs-dark" : "light"}
+            theme={editorTheme(dark)}
+            beforeMount={defineEditorThemes}
             onChange={(value) => set("code")(value ?? "")}
-            options={{ minimap: { enabled: false }, fontSize: 13, scrollBeyondLastLine: false, automaticLayout: true, tabSize: 4 }}
+            options={{ minimap: { enabled: false }, fontSize: 13, fontFamily: EDITOR_FONT, scrollBeyondLastLine: false, automaticLayout: true, tabSize: 4 }}
           />
         </div>
       </div>

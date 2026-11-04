@@ -4,34 +4,34 @@ import { usePrefersDark } from "./theme.js";
 let mermaidModule;
 const loadMermaid = () => (mermaidModule ??= import("mermaid").then((module) => module.default));
 
-// Node colour shows its role: steps blue, decisions amber, start/end green.
+// Node colour shows its role: steps violet, decisions amber, start/end teal (the Aurora palette).
 const PALETTE = {
   light: {
-    step: "fill:#eef3ff,stroke:#5b7cf0,color:#1b2559",
-    decision: "fill:#fff4e0,stroke:#e0a03a,color:#4a3300",
-    terminal: "fill:#e6f5ec,stroke:#38a169,color:#123d27",
+    step: "fill:#f1ebff,stroke:#7c3aed,color:#2e1065",
+    decision: "fill:#fff4dc,stroke:#d97706,color:#4a2c00",
+    terminal: "fill:#dcf7f1,stroke:#0d9488,color:#0b3b36",
     theme: {
-      lineColor: "#8a94a6",
-      textColor: "#1c2026",
-      primaryTextColor: "#1c2026",
+      lineColor: "#9a92bd",
+      textColor: "#1b1533",
+      primaryTextColor: "#1b1533",
       edgeLabelBackground: "#ffffff",
-      clusterBkg: "#f7f8fa",
-      clusterBorder: "#d6dae1",
-      titleColor: "#4a5160",
+      clusterBkg: "#f7f5ff",
+      clusterBorder: "#e0d9f7",
+      titleColor: "#5b5480",
     },
   },
   dark: {
-    step: "fill:#1e2846,stroke:#7c9cff,color:#e3e9ff",
-    decision: "fill:#3a2d12,stroke:#e9b04d,color:#ffe8bf",
-    terminal: "fill:#15342a,stroke:#4cc38a,color:#d4f5e3",
+    step: "fill:#251d47,stroke:#a78bfa,color:#ede7ff",
+    decision: "fill:#3a2a10,stroke:#f5b544,color:#ffe9c2",
+    terminal: "fill:#0f3330,stroke:#2dd4bf,color:#d2fbf3",
     theme: {
-      lineColor: "#7d8796",
-      textColor: "#e8eaed",
-      primaryTextColor: "#e8eaed",
-      edgeLabelBackground: "#1d2126",
-      clusterBkg: "#181c21",
-      clusterBorder: "#3a414b",
-      titleColor: "#aab2bd",
+      lineColor: "#7f77a8",
+      textColor: "#f0ecff",
+      primaryTextColor: "#f0ecff",
+      edgeLabelBackground: "#17132b",
+      clusterBkg: "#120f22",
+      clusterBorder: "#2c264b",
+      titleColor: "#b9b2dc",
     },
   },
 };
@@ -71,12 +71,12 @@ export default function MermaidDiagram({ chart }) {
           securityLevel: "strict",
           theme: "base",
           themeVariables: {
-            fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+            fontFamily: '"Plus Jakarta Sans Variable", system-ui, sans-serif',
             fontSize: "14px",
             ...palette.theme,
           },
           themeCSS: [
-            ".node rect { rx: 8px; ry: 8px; }",
+            ".node rect { rx: 10px; ry: 10px; }",
             // Edge labels otherwise keep the theme's dark default text, unreadable in dark mode.
             `.edgeLabel, .edgeLabel p, .edgeLabel span { font-size: 12px; color: ${palette.theme.titleColor} !important; }`,
             `.edgeLabel rect, .labelBkg { fill: ${palette.theme.edgeLabelBackground} !important; background: ${palette.theme.edgeLabelBackground} !important; }`,

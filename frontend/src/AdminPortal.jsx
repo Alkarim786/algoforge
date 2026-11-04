@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { api, fetchMe, getToken, signOut } from "./api.js";
-import { Avatar } from "./App.jsx";
+import { Avatar, Logo, ThemeToggle } from "./App.jsx";
 
 const ProblemTable = lazy(() => import("./AdminContent.jsx").then((module) => ({ default: module.ProblemTable })));
 const ProblemEditor = lazy(() => import("./AdminContent.jsx").then((module) => ({ default: module.ProblemEditor })));
@@ -337,13 +337,14 @@ export default function AdminPortal() {
   return (
     <>
       <header className="topbar admin-bar">
-        <Link to="/admin" className="brand">AlgoForge <span className="admin-badge">Admin</span></Link>
+        <Logo to="/admin"><span className="admin-badge">Admin</span></Logo>
         <nav className="nav-links" aria-label="Admin">
           <NavLink to="/admin" end>Students</NavLink>
           <NavLink to="/admin/problems">Problems</NavLink>
         </nav>
         <div className="nav-right">
           <Link to="/" className="link small">View site</Link>
+          <ThemeToggle />
           <span className="profile-link">
             <Avatar name={me.username} />
             <span className="profile-name">{me.username}</span>
