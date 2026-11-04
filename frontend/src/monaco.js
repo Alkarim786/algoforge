@@ -7,8 +7,26 @@ loader.config({ paths: { vs: "/monaco/vs" } });
 
 export const EDITOR_FONT = '"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, Consolas, monospace';
 
-/** Aurora colours for Monaco. Pass as `beforeMount` on every <Editor>; defining a theme twice is harmless. */
+let fontsMeasured = null;
+
+/** Monaco measures character widths once, when the first editor is created. If the code font is still downloading
+ * at that moment it measures a fallback font instead, and every click lands a little off where the caret goes (more
+ * so further along a line). So: load the code font (regular and bold, which keywords use), then have every editor
+ * measure again. */
+function remeasureWhenFontLoads(monaco) {
+  if (!document.fonts) return;
+  fontsMeasured ??= Promise.all(
+    ["400", "700"].map((weight) => document.fonts.load(`${weight} 14px "JetBrains Mono Variable"`)),
+  )
+    .then(() => document.fonts.ready)
+    .then(() => monaco.editor.remeasureFonts())
+    .catch(() => {});
+}
+
+/** Aurora colours for Monaco, and the font fix above. Pass as `beforeMount` on every <Editor>; running it twice is
+ * harmless. */
 export function defineEditorThemes(monaco) {
+  remeasureWhenFontLoads(monaco);
   monaco.editor.defineTheme("aurora-light", {
     base: "vs",
     inherit: true,
