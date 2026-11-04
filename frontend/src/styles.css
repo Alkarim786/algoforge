@@ -120,6 +120,9 @@ input, select, textarea {
 }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
 input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.8; }
+input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--red); }
+input[aria-invalid="true"]:focus, textarea[aria-invalid="true"]:focus { box-shadow: 0 0 0 4px var(--red-bg); }
+.field-error { margin: 0; font-size: 13px; font-weight: 600; color: var(--red); line-height: 1.45; }
 
 /* ---------- Buttons ---------- */
 button[type="submit"], button.primary, .button-link {

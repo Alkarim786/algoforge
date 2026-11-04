@@ -23,7 +23,7 @@ class UserCreate(BaseModel):
     @classmethod
     def fits_bcrypt(cls, value: str) -> str:
         if len(value.encode()) > 72:
-            raise ValueError("password must be at most 72 bytes")
+            raise ValueError("password can be at most 72 characters long")
         return value
 
 
@@ -366,5 +366,5 @@ class PasswordChange(BaseModel):
     @classmethod
     def fits_bcrypt(cls, value: str) -> str:
         if len(value.encode()) > 72:
-            raise ValueError("password must be at most 72 bytes")
+            raise ValueError("password can be at most 72 characters long")
         return value

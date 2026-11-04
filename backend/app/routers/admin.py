@@ -116,7 +116,8 @@ def checked_case(problem: Problem, input_text: str, expected_output: str) -> tup
     try:
         return check_case(problem.entry, input_text, expected_output)
     except ValueError as error:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(error)) from None
+        message = str(error)
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, message[:1].upper() + message[1:] + ".") from None
 
 
 @router.get("/problems", response_model=list[AdminProblemRow])

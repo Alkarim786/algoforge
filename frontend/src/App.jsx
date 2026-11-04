@@ -4,6 +4,7 @@ import { BrowserRouter, Link, NavLink, Route, Routes, useLocation, useNavigate }
 import { api, fetchMe, getToken, signIn } from "./api.js";
 import Home from "./Home.jsx";
 import { setThemeChoice, useTheme } from "./theme.js";
+import { FieldError, useFieldErrors } from "./validation.jsx";
 
 const Workspace = lazy(() => import("./Workspace.jsx"));
 const TopicPage = lazy(() => import("./TopicPage.jsx"));
@@ -362,10 +363,16 @@ function Login() {
   const [fields, setFields] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
-  const update = (name) => (event) => setFields({ ...fields, [name]: event.target.value });
+  const { errors, validate, clear, fieldProps } = useFieldErrors();
+  const update = (name) => (event) => {
+    setFields({ ...fields, [name]: event.target.value });
+    clear(name);
+  };
 
   const submit = async (event) => {
     event.preventDefault();
+    setError(null);
+    if (!validate(event.currentTarget)) return;
     setBusy(true);
     setError(null);
     try {
@@ -403,7 +410,7 @@ function Login() {
       </section>
       <div className="auth-main">
         <ThemeToggle />
-        <form className="auth-form" onSubmit={submit}>
+        <form className="auth-form" onSubmit={submit} noValidate>
         {!signingUp && (
           <div className="role-switch" role="tablist" aria-label="Account type">
             <Link role="tab" aria-selected={!adminPortal} className={adminPortal ? "" : "active"} to="/login" state={location.state} replace>
@@ -423,11 +430,33 @@ function Login() {
               : "Sign in to continue where you left off."}
         </p>
         <label htmlFor="username">{signingUp ? "Username" : "Username or email"}</label>
-        <input id="username" required autoFocus autoComplete="username" value={fields.username} onChange={update("username")} />
+        <input
+          id="username"
+          required
+          autoFocus
+          autoComplete="username"
+          pattern={signingUp ? "[A-Za-z0-9_-]{3,32}" : undefined}
+          data-pattern-message="Usernames are 3 to 32 characters and can use letters, numbers, hyphens (-) and underscores (_)."
+          data-required-message={signingUp ? "Choose a username." : "Enter your username or email."}
+          value={fields.username}
+          onChange={update("username")}
+          {...fieldProps("username")}
+        />
+        <FieldError id="username" message={errors.username} />
         {signingUp && (
           <>
             <label htmlFor="email">Email</label>
-            <input id="email" type="email" required autoComplete="email" value={fields.email} onChange={update("email")} />
+            <input
+              id="email"
+              type="email"
+              required
+              autoComplete="email"
+              data-required-message="Enter your email address."
+              value={fields.email}
+              onChange={update("email")}
+              {...fieldProps("email")}
+            />
+            <FieldError id="email" message={errors.email} />
           </>
         )}
         <label htmlFor="password">Password</label>
@@ -437,10 +466,13 @@ function Login() {
           required
           minLength={signingUp ? 8 : undefined}
           autoComplete={signingUp ? "new-password" : "current-password"}
+          data-required-message="Enter your password."
           value={fields.password}
           onChange={update("password")}
+          {...fieldProps("password")}
         />
-        {signingUp && <p className="hint">At least 8 characters.</p>}
+        <FieldError id="password" message={errors.password} />
+        {signingUp && !errors.password && <p className="hint">At least 8 characters.</p>}
         {error && <p className="error" role="alert">{error}</p>}
         <button type="submit" disabled={busy}>
           {busy ? "Please wait…" : signingUp ? "Create account" : adminPortal ? "Sign in as admin" : "Sign in"}

@@ -77,3 +77,21 @@ def test_success_clears_earlier_failures(client):
     for _ in range(rate_limit.MAX_FAILURES_PER_ACCOUNT - 1):
         login(client, password="wrong-password")
     assert login(client).status_code == 200
+
+
+def test_validation_messages_are_readable(client):
+    def detail(body):
+        response = client.post("/auth/signup", json={**USER, **body})
+        assert response.status_code == 422
+        return response.json()["detail"]
+
+    assert detail({"username": "a b"}) == (
+        "Usernames are 3 to 32 characters and can use letters, numbers, hyphens (-) and underscores (_)."
+    )
+    assert detail({"email": "not-an-email"}) == "Enter an email address like name@example.com."
+    assert detail({"password": "short"}) == "Password needs at least 8 characters."
+    assert detail({"password": "x" * 73}) == "Password can be at most 72 characters long."
+    missing = client.post("/auth/signup", json={"username": "karim"}).json()
+    assert missing["detail"] == "Email is required. Password is required."
+    assert [error["field"] for error in missing["errors"]] == ["email", "password"]
+    assert "pattern" not in client.post("/auth/login?portal=teacher", data={"username": "a", "password": "b"}).text
