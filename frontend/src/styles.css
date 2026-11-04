@@ -107,6 +107,8 @@ code, pre, kbd { font-family: var(--mono); font-variant-ligatures: none; }
 ::selection { background: var(--accent-soft); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
 input, button, select, textarea { font: inherit; color: inherit; }
+/* The code editor's own hidden text box and find widget keep Monaco's styles, not the form styles below. */
+.monaco-editor textarea, .monaco-editor input { border-radius: 0 !important; transition: none !important; box-shadow: none !important; }
 
 input, select, textarea {
   padding: 10px 12px;
