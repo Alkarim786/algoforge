@@ -1,4 +1,4 @@
-import { Check, CheckCircle2, Circle, CircleDot, Moon, Search, Sun } from "lucide-react";
+import { BookOpen, Check, CheckCircle2, ChevronDown, Circle, CircleDot, Moon, Search, Sun } from "lucide-react";
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { BrowserRouter, Link, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { api, fetchMe, getToken, signIn } from "./api.js";
@@ -132,12 +132,99 @@ const STATUS_FILTERS = [
   ["solved", "Solved"],
 ];
 
+const PREVIEW_COUNT = 3;
+
+/** A circular progress meter with the count in the middle. */
+export function ProgressRing({ value, total, size = 64, label }) {
+  const stroke = 6;
+  const radius = (size - stroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const share = total ? value / total : 0;
+  const done = total > 0 && value === total;
+  return (
+    <div className={`ring ${done ? "done" : ""}`} style={{ width: size, height: size }} role="img" aria-label={label ?? `${value} of ${total} solved`}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
+        <circle className="ring-track" cx={size / 2} cy={size / 2} r={radius} strokeWidth={stroke} fill="none" />
+        <circle
+          className="ring-fill"
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          strokeWidth={stroke}
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference * (1 - share)}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          style={{ opacity: value ? 1 : 0 }}
+        />
+      </svg>
+      <span className="ring-label">
+        <strong>{value}</strong>
+        <span>/{total}</span>
+      </span>
+    </div>
+  );
+}
+
+function TopicCard({ topic, index, problems, progress, open, forcedOpen, onToggle }) {
+  const solved = topic.problems.filter((problem) => progress.solved.has(problem.slug)).length;
+  const counts = ["Easy", "Medium", "Hard"].map((level) => [level, topic.problems.filter((problem) => problem.difficulty === level).length]);
+  const expanded = open || forcedOpen;
+  const shown = expanded ? problems : problems.slice(0, PREVIEW_COUNT);
+  const listId = `topic-${topic.slug}-problems`;
+
+  return (
+    <section className={`card topic-card ${expanded ? "open" : ""}`} aria-labelledby={`topic-${topic.slug}-title`}>
+      <div className="topic-card-head">
+        <span className="path-number">{index + 1}</span>
+        <div className="topic-card-title">
+          <h2 id={`topic-${topic.slug}-title`}>
+            <Link to={`/topics/${topic.slug}`} className="topic-link">{topic.name}</Link>
+          </h2>
+          <div className="difficulty-mix">
+            {counts.filter(([, count]) => count > 0).map(([level, count]) => (
+              <span key={level} className={`difficulty ${level.toLowerCase()}`}>{count} {level}</span>
+            ))}
+          </div>
+        </div>
+        <ProgressRing value={solved} total={topic.problems.length} label={`${topic.name}: ${solved} of ${topic.problems.length} solved`} />
+      </div>
+
+      <ul className="problem-list" id={listId}>
+        {shown.map((problem) => (
+          <li key={problem.slug}>
+            <StatusMark slug={problem.slug} progress={progress} />
+            <Link to={`/problems/${problem.slug}`}>{problem.title}</Link>
+            <DifficultyTag difficulty={problem.difficulty} />
+          </li>
+        ))}
+      </ul>
+
+      <div className="topic-card-foot">
+        {topic.notes_content ? (
+          <Link to={`/topics/${topic.slug}`} className="link small"><BookOpen size={14} aria-hidden="true" /> Notes</Link>
+        ) : (
+          <span className="muted small">Notes coming soon</span>
+        )}
+        {!forcedOpen && problems.length > PREVIEW_COUNT && (
+          <button type="button" className="topic-toggle" aria-expanded={expanded} aria-controls={listId} onClick={onToggle}>
+            {expanded ? "Show less" : `Show all ${problems.length}`}
+            <ChevronDown size={16} aria-hidden="true" />
+          </button>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function ProblemList() {
   const [topics, setTopics] = useState(null);
   const [error, setError] = useState(null);
   const [difficulty, setDifficulty] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [query, setQuery] = useState("");
+  const [openTopics, setOpenTopics] = useState(() => new Set());
   const progress = useProgress();
   const signedIn = Boolean(getToken());
 
@@ -154,6 +241,7 @@ function ProblemList() {
   }, []);
 
   const needle = query.trim().toLowerCase();
+  const filtering = Boolean(needle) || difficulty !== "all" || statusFilter !== "all";
   const matches = (problem) => {
     if (needle && !problem.title.toLowerCase().includes(needle)) return false;
     if (difficulty !== "all" && problem.difficulty !== difficulty) return false;
@@ -164,74 +252,81 @@ function ProblemList() {
     if (statusFilter === "todo") return !solved && !attempted;
     return true;
   };
+  const toggle = (slug) =>
+    setOpenTopics((previous) => {
+      const next = new Set(previous);
+      if (next.has(slug)) next.delete(slug);
+      else next.add(slug);
+      return next;
+    });
+
+  const total = topics?.reduce((sum, topic) => sum + topic.problems.length, 0) ?? 0;
+  const visibleTopics = topics?.map((topic, index) => ({ topic, index, problems: topic.problems.filter(matches) })).filter((item) => item.problems.length > 0);
 
   return (
     <>
       <NavBar />
-      <main className="page">
-        <div className="toolbar">
+      <main className="page problems-page">
+        <div className="problems-head">
           <div>
             <h1>Problems</h1>
             {topics && (
               <p className="muted">
-                {topics.reduce((total, topic) => total + topic.problems.length, 0)} problems across {topics.length} topics
-                {signedIn && ` · ${progress.solved.size} solved`}
+                {total} problems across {topics.length} topics. Open a topic to see all of its problems.
               </p>
             )}
           </div>
-          <div className="filters">
-            <label className="search">
-              <Search size={16} aria-hidden="true" />
-              <input type="search" aria-label="Search problems" placeholder="Search problems" value={query} onChange={(event) => setQuery(event.target.value)} />
-            </label>
-            <select aria-label="Difficulty" value={difficulty} onChange={(event) => setDifficulty(event.target.value)}>
-              <option value="all">All difficulties</option>
-              <option value="Easy">Easy</option>
-              <option value="Medium">Medium</option>
-              <option value="Hard">Hard</option>
-            </select>
-            {signedIn && (
-              <select aria-label="Status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-                {STATUS_FILTERS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-              </select>
-            )}
-          </div>
+          {topics && signedIn && (
+            <div className="card overall">
+              <ProgressRing value={progress.solved.size} total={total} size={72} label={`${progress.solved.size} of ${total} problems solved`} />
+              <div>
+                <strong>{Math.round((100 * progress.solved.size) / Math.max(1, total))}% complete</strong>
+                <span className="muted small">{progress.attempted.size - progress.solved.size > 0 ? `${progress.attempted.size - progress.solved.size} attempted, not solved yet` : "Keep going"}</span>
+              </div>
+            </div>
+          )}
         </div>
+
+        <div className="filters problems-filters">
+          <label className="search">
+            <Search size={16} aria-hidden="true" />
+            <input type="search" aria-label="Search problems" placeholder="Search problems" value={query} onChange={(event) => setQuery(event.target.value)} />
+          </label>
+          <select aria-label="Difficulty" value={difficulty} onChange={(event) => setDifficulty(event.target.value)}>
+            <option value="all">All difficulties</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+          {signedIn && (
+            <select aria-label="Status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+              {STATUS_FILTERS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            </select>
+          )}
+          {topics && !filtering && (
+            <button type="button" className="secondary" onClick={() => setOpenTopics(openTopics.size ? new Set() : new Set(topics.map((topic) => topic.slug)))}>
+              {openTopics.size ? "Collapse all" : "Expand all"}
+            </button>
+          )}
+        </div>
+
         {error && <p className="error" role="alert">{error}</p>}
         {!topics && !error && <p className="muted">Loading…</p>}
-        <div className="topic-grid">
-          {topics?.map((topic) => {
-            const visible = topic.problems.filter(matches);
-            if (visible.length === 0) return null;
-            return (
-              <section key={topic.slug} className="card">
-                <h2>
-                  <Link to={`/topics/${topic.slug}`} className="topic-link">{topic.name}</Link>
-                  <span className="topic-count">
-                    {signedIn
-                      ? `${topic.problems.filter((problem) => progress.solved.has(problem.slug)).length} / ${topic.problems.length} solved`
-                      : `${topic.problems.length} problems`}
-                  </span>
-                </h2>
-                <p className="muted small topic-blurb">
-                  {topic.notes_content ? <Link to={`/topics/${topic.slug}`}>Read the notes</Link> : "Notes coming soon"}
-                </p>
-                <ul className="problem-list">
-                  {visible.map((problem) => (
-                    <li key={problem.slug}>
-                      <StatusMark slug={problem.slug} progress={progress} />
-                      <Link to={`/problems/${problem.slug}`}>{problem.title}</Link>
-                      <DifficultyTag difficulty={problem.difficulty} />
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            );
-          })}
+        <div className="topic-cards">
+          {visibleTopics?.map(({ topic, index, problems }) => (
+            <TopicCard
+              key={topic.slug}
+              topic={topic}
+              index={index}
+              problems={problems}
+              progress={progress}
+              open={openTopics.has(topic.slug)}
+              forcedOpen={filtering}
+              onToggle={() => toggle(topic.slug)}
+            />
+          ))}
         </div>
-        {topics && topics.every((topic) => topic.problems.filter(matches).length === 0) && (
-          <p className="card empty">No problems match these filters.</p>
-        )}
+        {visibleTopics && visibleTopics.length === 0 && <p className="card empty">No problems match these filters.</p>}
       </main>
     </>
   );

@@ -438,22 +438,59 @@ tbody tr { transition: background-color 0.12s; }
 .activity-slot.active .activity-empty { background: var(--muted); }
 .activity-axis { display: flex; justify-content: space-between; margin-top: 6px; }
 
-/* ---------- Problem list ---------- */
-.topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; margin-top: 4px; }
-.topic-grid .card { padding: 18px 20px 10px; }
-.topic-grid h2 { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 18px; }
-.topic-count { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--muted); padding: 3px 10px; border-radius: var(--pill); background: var(--surface-2); }
+/* ---------- Problem list: topic cards ---------- */
+.problems-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
+.problems-head h1 { font-size: 34px; letter-spacing: -0.035em; }
+.overall { display: flex; align-items: center; gap: 16px; padding: 14px 22px 14px 14px; }
+.overall > div > strong { display: block; font-size: 17px; }
+.problems-filters { margin-bottom: 22px; }
+.topic-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 18px; align-items: start; }
+.topic-card { display: flex; flex-direction: column; gap: 12px; padding: 20px 22px 14px; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+.topic-card:hover { border-color: var(--border-strong); }
+.topic-card.open { grid-column: 1 / -1; border-color: var(--accent); }
+.topic-card-head { display: flex; align-items: center; gap: 14px; }
+.topic-card-title { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.topic-card-title h2 { margin: 0; font-size: 18px; letter-spacing: -0.02em; }
 .topic-link { color: var(--text); text-decoration: none; }
 .topic-link:hover { color: var(--accent-ink); }
-.topic-blurb { margin: 4px 0 10px; }
+.difficulty-mix { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.difficulty-mix .difficulty { font-size: 12px; }
+.topic-card .problem-list li { border-top: 1px solid var(--divider); }
+.topic-card.open .problem-list li:nth-child(-n+2) { border-top: 0; }
+.topic-card.open .problem-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; }
+.topic-card-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 2px; }
+.topic-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--pill);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700; font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+.topic-toggle:hover { border-color: var(--accent); color: var(--accent-ink); }
+.topic-toggle[aria-expanded="true"] { background: var(--accent-soft); border-color: transparent; color: var(--accent-ink); }
+.topic-toggle svg { transition: transform 0.2s; }
+.topic-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
 .problem-list { list-style: none; margin: 0; padding: 0; }
 .problem-list li { display: flex; align-items: center; gap: 10px; padding: 9px 8px; margin: 0 -8px; border-radius: var(--radius-xs); border-top: 1px solid var(--divider); }
 .problem-list li:first-child { border-top: 0; }
 .problem-list li:hover { background: var(--surface-2); }
-.problem-list a { margin-right: auto; color: var(--text); text-decoration: none; font-weight: 600; }
+.problem-list a { flex: 1; min-width: 0; color: var(--text); text-decoration: none; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .problem-list a:hover { color: var(--accent-ink); }
-.problem-list.numbered { list-style: none; counter-reset: problem; }
+.problem-list.numbered { counter-reset: problem; }
 .problem-list.numbered li::before { counter-increment: problem; content: counter(problem); width: 22px; font-size: 12px; font-weight: 700; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Progress ring */
+.ring { position: relative; flex: none; display: inline-grid; place-items: center; }
+.ring svg { position: absolute; inset: 0; }
+.ring-track { stroke: var(--track); }
+.ring-fill { stroke: var(--accent); transition: stroke-dashoffset 0.7s ease; }
+.ring.done .ring-fill { stroke: var(--green-bar); }
+.ring-label { position: relative; white-space: nowrap; font-weight: 800; font-size: 15px; letter-spacing: -0.02em; }
+.ring-label span { font-size: 11px; font-weight: 700; color: var(--muted); }
 
 /* ---------- Topic notes ---------- */
 .topic-page { max-width: 1180px; }
@@ -666,7 +703,7 @@ button.small-button { padding: 5px 12px; font-size: 13px; }
   .divider.vertical { display: none; }
 }
 @media (max-width: 760px) {
-  .entry-grid, .two-up { grid-template-columns: minmax(0, 1fr); }
+  .entry-grid, .two-up, .topic-card.open .problem-list { grid-template-columns: minmax(0, 1fr); }
   .topbar { flex-wrap: wrap; height: auto; padding: 10px 16px; gap: 10px; }
 }
 @media (max-width: 640px) {
