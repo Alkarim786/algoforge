@@ -1,3 +1,6 @@
+# Development stack. Its own project name keeps it apart from docker-compose.prod.yml ("algoforge").
+name: algoforge-dev
+
 services:
   db:
     image: postgres:16-alpine
