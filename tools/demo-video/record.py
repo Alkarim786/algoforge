@@ -244,6 +244,8 @@ async def smooth_scroll(page, y, wait=1200):
 
 
 async def caption(page, n, text, sub=""):
+    if os.environ.get("NO_CAPTIONS"):  # the cinematic edit (cinema.py) adds its own titles
+        return
     await page.evaluate("([n, t, s]) => window.__caption(n, t, s)", [n, text, sub])
 
 
