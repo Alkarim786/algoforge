@@ -2,6 +2,8 @@
 
 A topic-organized coding practice platform. See [CLAUDE.md](CLAUDE.md) for the full plan.
 
+▶ **[Watch the 67-second demo](docs/media/algoforge-demo.mp4)**
+
 Built so far: auth, the sandboxed Python judge, the editor, notes for all 10 topics, and 75 problems. Every problem has a "how to think" guide plus brute-force and optimized solutions, each with a dry run, line-by-line notes and a flowchart. There is also a landing page, a study dashboard, a profile page and an admin portal. Python is the only language for now; C++ and Java come later.
 
 ## Run
